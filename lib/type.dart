@@ -27,7 +27,7 @@ class ASTNode {
 
   @override
   String toString() {
-    return '''ASTNode{type: $type,
+    return '''ASTNode{type: $type, placeholder: $placeHolder
                children: [
                  ${children.map((e) => e.toString()).join("\n")}
                ]}''';
@@ -42,30 +42,40 @@ enum ASTNodeType {
   value,
 }
 
+enum TokenCategory {
+  single,
+  pair,
+  other,
+}
+
 enum TokenType {
-  number,
-  string,
-  boolean,
-  nullType,
-  openBrace,
-  closeBrace,
-  openBracket,
-  closeBracket,
-  colon,
-  comma,
-  eof,
+  number(TokenCategory.single),
+  string(TokenCategory.single),
+  boolean(TokenCategory.single),
+  nullType(TokenCategory.single),
+  openBrace(TokenCategory.pair),
+  closeBrace(TokenCategory.pair),
+  openBracket(TokenCategory.pair),
+  closeBracket(TokenCategory.pair),
+  colon(TokenCategory.other),
+  comma(TokenCategory.other),
+  eof(TokenCategory.other);
+
+  final TokenCategory category;
+
+  const TokenType(this.category);
 }
 
-enum SingleTokenType {
-  number,
-  string,
-  boolean,
-  nullType,
-}
-
-enum PairTokenType {
-  leftBrace,
-  rightBrace,
-  leftBracket,
-  rightBracket,
-}
+// enum SingleTokenType {
+//   number,
+//   string,
+//   boolean,
+//   nullType,
+// }
+//
+// enum PairTokenType {
+//   leftBrace,
+//   rightBrace,
+//   leftBracket,
+//   rightBracket,
+// }

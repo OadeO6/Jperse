@@ -12,7 +12,7 @@ ASTNode parser(List<Token> tokens) {
         return ASTNode(ASTNodeType.array);
       }
     // case 1:
-    //   if (!(SingleTokenType.values.contains(tokens[0].type))) {
+    //  if (tokens[0].type.category == TokenCategory.single) {
     //     throw Exception("Unexpected ${tokens[0].value}");
     //   }
     case 0:
@@ -24,11 +24,13 @@ ASTNode parser(List<Token> tokens) {
 
 
   ASTNode buildASTNode(ASTNode node) {
+    print(node);
+    print(99999);
     if (node.type == ASTNodeType.object) {
       braceLoop:
       while (pointer < size) {
         pointer++;
-        ASTNode nNode = ASTNode(ASTNodeType.pair);
+        ASTNode nNode = ASTNode(ASTNodeType.pair, []);
         ASTNode tempNode;
 
 
@@ -42,16 +44,18 @@ ASTNode parser(List<Token> tokens) {
           throw Exception("Unexpected item ${tokens[pointer].value}");
         }
 
+        print(tokens[pointer]);
         // check for colon
         pointer++;
         if (tokens[pointer].type != TokenType.colon) {
           throw Exception("Unexpected item ${tokens[pointer].value}");
         }
+        print(tokens[pointer]);
 
         // check for value
         // NOTE: redundancy
         pointer++;
-        if (SingleTokenType.values.contains(tokens[pointer].type)) {
+        if (tokens[pointer].type.category == TokenCategory.single) {
           tempNode = ASTNode.value(tokens[pointer]);
         } else if (tokens[pointer].type == TokenType.openBrace) {
           // add to stack
@@ -70,29 +74,31 @@ ASTNode parser(List<Token> tokens) {
         nNode.children.add(tempNode);
         node.children.add(nNode);
         // check end or comma
-        if (tokens[pointer].type == TokenType.closeBrace ||
-            tokens[pointer].type == TokenType.comma) {
-          pointer++;
-          switch (tokens[pointer].type) {
-            case TokenType.closeBrace:
-              // pop stack
-              break braceLoop;
-            case TokenType.comma:
-              continue braceLoop;
-            default:
-              throw Exception("Missing ','");
-          }
+        pointer++;
+        switch (tokens[pointer].type) {
+          case TokenType.closeBrace:
+            // pop stack
+            break braceLoop;
+          case TokenType.comma:
+            continue braceLoop;
+          default:
+            throw Exception("Missing ','");
         }
+      }
+      if (pointer != size - 1) {
+        throw Exception("Unexpected charater '${tokens[pointer+1].value}'");
       }
     }
     if (node.type == ASTNodeType.array) {
       bracketLoop:
       while (pointer < size) {
+      print(888888);
+      print("$pointer $size");
         pointer++;
         ASTNode nNode;
           // print("loging1, $pointer");
           // print("loging1,   ${tokens[pointer]}");
-        if (SingleTokenType.values.contains(tokens[pointer].type)) {
+        if (tokens[pointer].type.category == TokenCategory.single) {
           // print("loging2");
           nNode = ASTNode.value(tokens[pointer]);
         } else if (tokens[pointer].type == TokenType.openBrace) {
@@ -113,21 +119,21 @@ ASTNode parser(List<Token> tokens) {
         }
         node.children.add(nNode);
         // check end or comma
-        if (tokens[pointer].type == TokenType.closeBracket ||
-            tokens[pointer].type == TokenType.comma) {
-          pointer++;
-          switch (tokens[pointer].type) {
-            case TokenType.closeBracket:
-              // pop stack
-              break bracketLoop;
-            case TokenType.comma:
-              continue bracketLoop;
-            default:
-              throw Exception("Missing ','");
-          }
+        pointer++;
+        switch (tokens[pointer].type) {
+          case TokenType.closeBracket:
+            // pop stack
+            break bracketLoop;
+          case TokenType.comma:
+            continue bracketLoop;
+          default:
+            throw Exception("Missing ','");
         }
 
         // break if end
+      }
+      if (pointer != size - 1) {
+        throw Exception("Unexpected charater '${tokens[pointer+1].value}'");
       }
     }
     return node;

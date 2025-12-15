@@ -10,6 +10,7 @@ part 'stack.dart';
 
 void parse(String file) async {
   String? data = await loadFile(file);
+  print(lexer(data));
   print(parser(lexer(data)));
   print("hello");
   return;

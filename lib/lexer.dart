@@ -28,6 +28,7 @@ List<Token> lexer(String data) {
   var flag = null;
   String tempVar = "";
   bool escapeChr = false;
+  Token? numberTemp = null;
   loop1:
   for (var rune in data.runes) {
     final chr = String.fromCharCode(rune);
@@ -35,33 +36,70 @@ List<Token> lexer(String data) {
       switch (chr) {
         case "{":
           tokens.add(Token(TokenType.openBrace, "{"));
+          tempVar = '';
+          numberTemp = null;
         case "}":
           tokens.add(Token(TokenType.closeBrace, "}"));
+          tempVar = '';
+          numberTemp = null;
         case "[":
           tokens.add(Token(TokenType.openBracket, "["));
+          tempVar = '';
+          numberTemp = null;
         case "]":
           tokens.add(Token(TokenType.closeBracket, "]"));
+          tempVar = '';
+          numberTemp = null;
         case ":":
           tokens.add(Token(TokenType.colon, ":"));
+          tempVar = '';
+          numberTemp = null;
         case ",":
           tokens.add(Token(TokenType.comma, ","));
+          tempVar = '';
+          numberTemp = null;
         case '"':
           flag = '"';
+          tempVar = '';
+          numberTemp = null;
         case "'":
           flag = '"';
+          tempVar = '';
+          numberTemp = null;
         case 'n':
           flag = 'n';
           tempVar = 'n';
+          numberTemp = null;
         case 'f':
           flag = 'f';
           tempVar = 'f';
+          numberTemp = null;
         case 't':
           flag = 't';
           tempVar = 't';
+          numberTemp = null;
 
         case ' ' || "\n":
           continue;
         default:
+          if (chr == '-' && tempVar == "") {
+            tempVar = chr;
+            continue loop1;
+          } else {
+            // TODO: optimize (numberTemp, tempVar)
+            tempVar += chr;
+            if (!(isNumeric(tempVar))) {
+              throw Exception("Unexpected  '${tempVar[0]}'");
+            }
+            if (numberTemp != null) {
+              numberTemp.value = tempVar;
+            } else {
+              numberTemp = Token(TokenType.number, tempVar);
+              tokens.add(numberTemp);
+
+            }
+            continue loop1;
+          }
           throw Exception("Unexpected '$chr'");
       }
       continue loop1;
@@ -101,17 +139,19 @@ List<Token> lexer(String data) {
         }
       default:
         // Handle string
-        if (flag == chr) {
-          if (!escapeChr) {
-            flag = null;
-            tokens.add(Token(TokenType.string, tempVar));
-            tempVar = "";
+        if (flag == "'" || flag == '"') {
+          if (flag == chr) {
+            if (!escapeChr) {
+              flag = null;
+              tokens.add(Token(TokenType.string, tempVar));
+              tempVar = "";
+            }
           }
-        }
-        if (chr == "\\") {
-          escapeChr = !escapeChr;
-        } else {
-          escapeChr = false;
+          if (chr == "\\") {
+            escapeChr = !escapeChr;
+          } else {
+            escapeChr = false;
+          }
         }
     }
   }

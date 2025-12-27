@@ -21,11 +21,11 @@ ASTNode parser(List<Token> tokens) {
   var size = tokens.length;
   var pointer = 0;
   final ASTNode node;
+  var bracketCount = 0;
+  var braceCount = 0;
 
 
   ASTNode buildASTNode(ASTNode node) {
-    print(node);
-    print(99999);
     if (node.type == ASTNodeType.object) {
       braceLoop:
       while (pointer < size) {
@@ -38,19 +38,19 @@ ASTNode parser(List<Token> tokens) {
         if (tokens[pointer].type == TokenType.string) {
           nNode.children.add(ASTNode.key(tokens[pointer]));
         } else if (tokens[pointer].type == TokenType.closeBrace) {
+            // decrease brace count
+            braceCount--;
             //pop stack
             break braceLoop;
         } else {
           throw Exception("Unexpected item ${tokens[pointer].value}");
         }
 
-        print(tokens[pointer]);
         // check for colon
         pointer++;
         if (tokens[pointer].type != TokenType.colon) {
           throw Exception("Unexpected item ${tokens[pointer].value}");
         }
-        print(tokens[pointer]);
 
         // check for value
         // NOTE: redundancy
@@ -58,14 +58,20 @@ ASTNode parser(List<Token> tokens) {
         if (tokens[pointer].type.category == TokenCategory.single) {
           tempNode = ASTNode.value(tokens[pointer]);
         } else if (tokens[pointer].type == TokenType.openBrace) {
+          // increase brace count
+          braceCount++;
           // add to stack
           tempNode = ASTNode(ASTNodeType.object, []);
-          buildASTNode(nNode);
+          buildASTNode(tempNode);
         } else if (tokens[pointer].type == TokenType.openBracket) {
+          // increase bracket count
+          bracketCount++;
           // add to stack
-          tempNode = ASTNode(ASTNodeType.array);
-          buildASTNode(nNode);
+          tempNode = ASTNode(ASTNodeType.array, []);
+          buildASTNode(tempNode);
         } else if (tokens[pointer].type == TokenType.closeBrace) {
+          // decrease brace count
+          braceCount--;
           // pop from stack
           break braceLoop;
         } else {
@@ -77,6 +83,8 @@ ASTNode parser(List<Token> tokens) {
         pointer++;
         switch (tokens[pointer].type) {
           case TokenType.closeBrace:
+            // pop from stack
+            braceCount--;
             // pop stack
             break braceLoop;
           case TokenType.comma:
@@ -85,44 +93,44 @@ ASTNode parser(List<Token> tokens) {
             throw Exception("Missing ','");
         }
       }
-      if (pointer != size - 1) {
+      if ((pointer != size - 1) && (bracketCount == 0) && (braceCount == 0)) {
         throw Exception("Unexpected charater '${tokens[pointer+1].value}'");
       }
     }
     if (node.type == ASTNodeType.array) {
       bracketLoop:
       while (pointer < size) {
-      print(888888);
-      print("$pointer $size");
         pointer++;
         ASTNode nNode;
-          // print("loging1, $pointer");
-          // print("loging1,   ${tokens[pointer]}");
         if (tokens[pointer].type.category == TokenCategory.single) {
-          // print("loging2");
           nNode = ASTNode.value(tokens[pointer]);
         } else if (tokens[pointer].type == TokenType.openBrace) {
-          // print("loging3");
+          // increase brace count
+          braceCount++;
           // add to stack
           nNode = ASTNode(ASTNodeType.object, []);
           buildASTNode(nNode);
         } else if (tokens[pointer].type == TokenType.openBracket) {
-          // print("loging4");
+          // increase brace count
+          bracketCount++;
           // add to stack
           nNode = ASTNode(ASTNodeType.array, []);
           buildASTNode(nNode);
         } else if (tokens[pointer].type == TokenType.closeBracket) {
           // pop from stack
+          bracketCount--;
           break bracketLoop;
         } else {
           throw Exception("Unexpected item ${tokens[pointer].value}");
         }
         node.children.add(nNode);
+
         // check end or comma
         pointer++;
         switch (tokens[pointer].type) {
           case TokenType.closeBracket:
-            // pop stack
+            // pop from stack
+            bracketCount--;
             break bracketLoop;
           case TokenType.comma:
             continue bracketLoop;
@@ -132,7 +140,7 @@ ASTNode parser(List<Token> tokens) {
 
         // break if end
       }
-      if (pointer != size - 1) {
+      if ((pointer != size - 1) && (bracketCount == 0) && (braceCount == 0)) {
         throw Exception("Unexpected charater '${tokens[pointer+1].value}'");
       }
     }
@@ -142,8 +150,11 @@ ASTNode parser(List<Token> tokens) {
 
   if (tokens[0].type == TokenType.openBrace) {
     node = ASTNode(ASTNodeType.object, []);
+    braceCount++;
+
   } else if (tokens[0].type == TokenType.openBracket) {
     node = ASTNode(ASTNodeType.array, []);
+    bracketCount++;
   } else {
     throw Exception("Unexpected ${tokens[0].value}, $tokens[0]");
   }

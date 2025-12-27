@@ -6,6 +6,7 @@ part 'lexer.dart';
 part 'parser.dart';
 part 'type.dart';
 part 'stack.dart';
+part 'util.dart';
 
 
 void parse(String file) async {

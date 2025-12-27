@@ -1,0 +1,64 @@
+input:
+{"ade": true, "bola": 555, "": "aaaa"}
+output:
+ASTNode{type: ASTNodeType.object, placeholder: null
+children: [
+  ASTNode{type: ASTNodeType.pair, placeholder: null
+  children: [
+    ASTNode{type: ASTNodeType.key, placeholder: Token{type: TokenType.string, value: ade"}
+    children: [
+
+    ]}
+    ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.boolean, value: true}
+    children: [
+
+    ]}
+  ]}
+  ASTNode{type: ASTNodeType.pair, placeholder: null
+  children: [
+    ASTNode{type: ASTNodeType.key, placeholder: Token{type: TokenType.string, value: bola"}
+    children: [
+
+    ]}
+    ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.number, value: 555}
+    children: [
+
+    ]}
+  ]}
+  ASTNode{type: ASTNodeType.pair, placeholder: null
+  children: [
+    ASTNode{type: ASTNodeType.key, placeholder: Token{type: TokenType.string, value: "}
+    children: [
+
+    ]}
+    ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.string, value: aaaa"}
+    children: [
+
+    ]}
+  ]}
+]}
+
+["as", 12, true, false, {}]
+ASTNode{type: ASTNodeType.array, placeholder: null
+children: [
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.string, value: as"}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.number, value: 12}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.boolean, value: true}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.boolean, value: false}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.object, placeholder: null
+  children: [
+
+  ]}
+]}

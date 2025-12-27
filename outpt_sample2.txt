@@ -1,0 +1,38 @@
+[
+  "as", 12.12, true, false, null, "asd"
+]
+                             |               |
+                             V               V
+[Token{type: TokenType.openBracket, value: [}, Token{type: TokenType.string, value: as"}, Token{type: TokenType.comma, value: ,}, Token{type: TokenType.number, value: 12.12}, Token{type: TokenType.comma, value: ,}, Token{type: TokenType.boolean, value: true}, Token{type: TokenType.comma, value: ,}, Token{type: TokenType.boolean, value: false}, Token{type: TokenType.comma, value: ,}, Token{type: TokenType.nullType, value: null}, Token{type: TokenType.comma, value: ,}, Token{type: TokenType.string, value: asd"}, Token{type: TokenType.closeBracket, value: ]}]
+
+                             |               |
+                             V               V
+
+
+ASTNode{type: ASTNodeType.array, placeholder: null
+children: [
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.string, value: as"}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.number, value: 12.12}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.boolean, value: true}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.boolean, value: false}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.nullType, value: null}
+  children: [
+
+  ]}
+  ASTNode{type: ASTNodeType.value, placeholder: Token{type: TokenType.string, value: asd"}
+  children: [
+
+  ]}
+]}
